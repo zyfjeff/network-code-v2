@@ -45,6 +45,8 @@ int main(void)
     signal(SIGPIPE,SIG_IGN);
     signal(SIGCHLD,SIG_IGN);
 
+    int idlefd = open("/dev/null", O_RDONLY | O_CLOEXEC);
+
     //下面都是网络编程的惯例,socket bind listen
     int listenfd;
     if((listenfd = socket(PF_INET,SOCK_STREAM|SOCK_NONBLOCK|SOCK_CLOEXEC,
@@ -103,9 +105,9 @@ int main(void)
             peerlen = sizeof(peeraddr);
             connfd = accept4(listenfd,(struct sockaddr*)&peeraddr,&peerlen,
                             SOCK_NONBLOCK | SOCK_CLOEXEC);
-            if (connfd == -1)
-                ERR_EXIT("accept4");
-/*
+//            if (connfd == -1)
+//                ERR_EXIT("accept4");
+
             if (connfd == -1) {
                 if (errno == EMFILE) {
                     close(idlefd);
@@ -117,7 +119,7 @@ int main(void)
                     ERR_EXIT("accept4");   
                 }
             }
-*/
+
             pfd.fd = connfd;
             pfd.events = POLLIN;
             pfd.revents = 0;
