@@ -38,7 +38,8 @@ int main()
     struct timespec ts = {1,0};
     nanosleep(&ts,NULL);
     if (fork() == 0) {
-        doit(NULL);    
+        doit(NULL);//线程中已经加锁了，导致子进程执行的时候锁的状态是锁定的，
+                   //所以导致子进程再次加锁出现死锁。
     }
     pthread_join(p,NULL);
     printf("pid = %d Exiting main ...\n",static_cast<int>(getpid()));
